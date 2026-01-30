@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+        // 1. Build Stage runs first
         stage('Build') {
             agent { 
                 docker {
@@ -11,12 +12,17 @@ pipeline {
             }
             steps {
                 sh '''
-                    ls -la
                     node --version
-                    npm --version
                     npm ci
                     npm run build
                 '''    
+            }
+        }
+
+        // 2. Test Stage runs only after Build finishes successfully
+        stage('Test') {
+            steps {
+                echo 'Test stage'
             }
         }
     }
