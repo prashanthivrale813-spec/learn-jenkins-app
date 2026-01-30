@@ -14,7 +14,9 @@ pipeline {
                 sh '''
                     node --version
                     npm ci
+                    npm ci
                     npm run build
+                    ls -la
                 '''    
             }
         }
@@ -22,7 +24,7 @@ pipeline {
         // 2. Test Stage runs only after Build finishes successfully
         stage('Test') {
             steps {
-                echo 'Test stage'
+                sh 'test -f build/index.html'
             }
         }
     }
