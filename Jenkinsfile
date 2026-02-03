@@ -47,7 +47,7 @@ pipeline {
                     npm install -g netlify-cli
                     
                     # Verify installation
-                    netlify --version
+                    node_module/.bin/netlify --version
                 '''    
             }
         }
