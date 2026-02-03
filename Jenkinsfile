@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     stages {
-        // 1. Build Stage runs first
         stage('Build') {
             agent { 
-                docker {                  
+                docker {                   
                     image 'node:18-alpine'
                     reuseNode true
                 }
@@ -14,14 +13,11 @@ pipeline {
                 sh '''
                     node --version
                     npm ci
-                    npm ci
                     npm run build
-                    ls -la
                 '''    
             }
         }
 
-        // 2. Test Stage runs only after Build finishes successfully
         stage('Test') {
             agent { 
                 docker {
@@ -29,26 +25,28 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
+                    # Ensure build folder exists before testing
                     test -f build/index.html
                     npm test
                 '''
             }
         }
 
-        stage('Deploy') {
+        stage('Install & Verify Netlify') {
             agent { 
-                docker {                  
+                docker {                   
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
-                    npm install netlify-cli
+                    # Install globally so 'netlify' command is available
+                    npm install -g netlify-cli
+                    
+                    # Verify installation
                     netlify --version
                 '''    
             }
