@@ -27,29 +27,23 @@ pipeline {
             }
             steps {
                 sh '''
-                    # Ensure build folder exists before testing
                     test -f build/index.html
                     npm test
                 '''
             }
         }
 
-        stage('Install & Verify Netlify') {
+        stage('Deploy') {
             agent { 
-                docker {                   
+                docker { 
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
-                sh '''
-                    # Install globally so 'netlify' command is available
-                    npm install -g netlify-cli
-                    
-                    # Verify installation
-                    node_module/.bin/netlify --version
-                '''    
+                // Using npx avoids the 'Permission Denied' error
+                sh 'npx netlify-cli --version' 
             }
         }
-    }
-}
+    } // End of stages
+} // End of pipeline
